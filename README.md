@@ -10,8 +10,10 @@ system and GitHub Actions already wired up.
 
 ## Quick start
 
+Press **Use this template** on GitHub, or:
+
 ```sh
-git clone https://github.com/mvoof/tauri-app-template my-app
+gh repo create my-app --template mvoof/tauri-app-template --private --clone
 cd my-app
 npm install                       # also installs the git hooks (lefthook)
 npm run rename "My App" com.example.my-app
@@ -21,6 +23,9 @@ npm run tauri:dev
 `npm run rename` rewrites the app name, the Rust crate name and the bundle
 identifier in `package.json`, `Cargo.toml`, both Tauri configs, `main.rs` and
 `index.html`. Do it once, right after cloning.
+
+A new repository does not get the template's environments and secrets: set them
+up once, as [docs/ci.md](./docs/ci.md) describes.
 
 **Prerequisites:** Node 20+, Rust stable, and the
 [Tauri system dependencies](https://tauri.app/start/prerequisites/) for your OS.
@@ -33,7 +38,7 @@ identifier in `package.json`, `Cargo.toml`, both Tauri configs, `main.rs` and
 | ------------------------------------- | --------------------------------------------------------- |
 | `npm run tauri:dev`                   | Run the desktop app in dev mode (Vite + Rust, hot reload) |
 | `npm run dev`                         | Vite only — the web part, without the Tauri shell         |
-| `npm run tauri:build:dev`             | Unsigned dev build (`nsis`), for sharing a preview        |
+| `npm run tauri:build:dev`             | Unsigned dev build (`nsis`, `deb`), for sharing a preview |
 | `npm run tauri:build:release`         | Release build with all bundle targets                     |
 | `npm run lint` / `lint:fix`           | oxlint, type-aware                                        |
 | `npm run format` / `format:check`     | oxfmt                                                     |
@@ -69,12 +74,13 @@ warnings`, `cargo test`.
 | Workflow                                        | Trigger          | Does                                                           |
 | ----------------------------------------------- | ---------------- | -------------------------------------------------------------- |
 | `pr-quality-check.yml` → `reusable-quality.yml` | PR to `main`     | lint, format check, typecheck, Vitest, `cargo fmt/clippy/test` |
-| `pr-build.yml`                                  | PR to `main`     | builds the Windows bundle, uploads it as an artifact           |
+| `pr-build.yml`                                  | PR to `main`     | after approval, builds the Windows and Linux bundles           |
 | `artifact-comment.yml`                          | after a PR build | comments the download links on the PR                          |
-| `release.yml`                                   | tag `v*`         | builds, signs and drafts a GitHub release                      |
+| `release.yml`                                   | tag `v*`         | after approval, builds every platform and drafts a release     |
 
 Jobs are skipped when nothing relevant changed — the path filters live in
-`.github/filters.yml`.
+`.github/filters.yml`. Setup, secrets and the release steps are in
+[docs/ci.md](./docs/ci.md).
 
 ---
 
@@ -146,6 +152,7 @@ colors from `src/styles/_tokens.scss`. Never hardcode a hex in a component.
 - [docs/getting-started.md](./docs/getting-started.md) — first hour with the template
 - [docs/conventions.md](./docs/conventions.md) — code style and structure rules
 - [docs/styling.md](./docs/styling.md) — the token system in detail
+- [docs/ci.md](./docs/ci.md) — CI setup, variables, secrets and releases
 - [AGENTS.md](./AGENTS.md) — the same rules, addressed to AI coding agents
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — branches, commits, PRs
 

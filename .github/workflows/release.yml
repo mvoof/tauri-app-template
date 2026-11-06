@@ -21,6 +21,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: Check the tag matches the app version
+        shell: bash
+        run: |
+          APP_VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+
+          if [ "$GITHUB_REF_NAME" != "v$APP_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the app version $APP_VERSION"
+            exit 1
+          fi
+
       - name: Setup Dependencies
         uses: ./.github/actions/setup-dependencies
         with:
