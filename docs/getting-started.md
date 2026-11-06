@@ -6,12 +6,15 @@
 - **Rust stable** (`rustup toolchain install stable`)
 - The [Tauri system dependencies](https://tauri.app/start/prerequisites/) for
   your OS. On Windows that is the WebView2 runtime (already present on Win 11)
-  and the MSVC build tools.
+  and the MSVC build tools. On Ubuntu, the packages listed in
+  `.github/actions/setup-dependencies/action.yml`.
 
-## 2. Clone and rename
+## 2. Create and rename
+
+Press **Use this template** on GitHub, or:
 
 ```sh
-git clone https://github.com/mvoof/tauri-app-template my-app
+gh repo create my-app --template mvoof/tauri-app-template --private --clone
 cd my-app
 npm install
 npm run rename "My App" com.example.my-app
@@ -33,6 +36,9 @@ is baked in:
 Then replace the icons in `src-tauri/icons/` (`npx tauri icon path/to/icon.png`
 generates the whole set from one 1024x1024 PNG), and delete the demo components
 you do not need.
+
+The repository's environments and secrets are not copied from the template. Set
+them up once: [CI and releases](./ci.md#after-creating-a-repository-from-the-template).
 
 ## 3. Run it
 
@@ -78,13 +84,6 @@ npm run tauri:build:dev      # unsigned local bundle, for testing
 npm run tauri:build:release  # full release build
 ```
 
-For signed GitHub releases, generate an updater keypair
-(`npx tauri signer generate`) and set `TAURI_PRIVATE_KEY` and
-`TAURI_KEY_PASSWORD` as repository secrets in the `release` environment — that
-is what `.github/workflows/release.yml` expects. Then push a tag:
-
-```sh
-git tag v0.1.0 && git push origin v0.1.0
-```
-
-The workflow builds every platform in the matrix and drafts a release.
+Pushing a tag such as `v0.1.0` builds every platform and drafts a GitHub release,
+after your approval. The tag must match the version in `tauri.conf.json`. The full
+steps, the secrets and the optional updater are in [CI and releases](./ci.md).
